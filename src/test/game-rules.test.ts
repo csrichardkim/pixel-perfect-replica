@@ -27,13 +27,14 @@ describe("room codes", () => {
 });
 
 describe("reveal timing", () => {
-  it("shows the prompt for 2.5s, then one card every 2.5s, then the collage", () => {
+  it("shows the prompt for 2.5s, then one card every 1s, then the collage", () => {
     expect(revealStage(0, 3)).toEqual({ kind: "intro" });
     expect(revealStage(2499, 3)).toEqual({ kind: "intro" });
     expect(revealStage(2500, 3)).toEqual({ kind: "cards", shown: 1 });
-    expect(revealStage(5000, 3)).toEqual({ kind: "cards", shown: 2 });
-    expect(revealStage(7500, 3)).toEqual({ kind: "cards", shown: 3 });
-    expect(revealStage(10000, 3)).toEqual({ kind: "final" });
+    expect(revealStage(3499, 3)).toEqual({ kind: "cards", shown: 1 });
+    expect(revealStage(3500, 3)).toEqual({ kind: "cards", shown: 2 });
+    expect(revealStage(4500, 3)).toEqual({ kind: "cards", shown: 3 });
+    expect(revealStage(5500, 3)).toEqual({ kind: "final" });
   });
 
   it("gives every device the same card order for a round", () => {

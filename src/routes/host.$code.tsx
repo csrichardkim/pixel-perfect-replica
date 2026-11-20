@@ -7,7 +7,7 @@ import { CountdownBar, PromptText, RoundBadge, WoodSign } from "@/components/cam
 import { EndGameButton } from "@/components/camp/EndGameButton";
 import { RevealShow } from "@/components/camp/RevealShow";
 import { usePlayers, useRoom, useServerClock, useTicker, type Room, type Player } from "@/hooks/use-game";
-import { endGame, hostNext, startGame, tickRound, verifyHost } from "@/lib/game.functions";
+import { endGame, hostNext, startGame, verifyHost } from "@/lib/game.functions";
 import { remainingMs } from "@/lib/game-utils";
 import { DEFAULT_ROUND_SECONDS, promptForRound, ROUND_TIMER_OPTIONS, TOTAL_ROUNDS } from "@/lib/prompts";
 import { session } from "@/lib/session";
@@ -214,18 +214,7 @@ function HostRound({ room, token, onChange }: { room: Room; token: string; onCha
   const now = useServerClock();
   useTicker(250);
   const left = remainingMs(room.round_started_at, room.round_duration_seconds, now());
-  const expired = left <= 0;
-
-  useEffect(() => {
-    if (!expired) return undefined;
-    const tick = () =>
-      void tickRound({ data: { code: room.code } })
-        .then(() => onChange())
-        .catch(() => {});
-    tick();
-    const again = setInterval(tick, 3000);
-    return () => clearInterval(again);
-  }, [expired, room.current_round, room.code, onChange]);
+  const allIn = room.eligible_count > 0 && room.submitted_count >= room.eligible_count;
 
   return (
     <main className="flex flex-1 flex-col items-center gap-8 text-center">
@@ -241,6 +230,11 @@ function HostRound({ room, token, onChange }: { room: Room; token: string; onCha
           {room.submitted_count} <span className="text-cream/60">/</span> {room.eligible_count}
         </p>
         <p className="font-display text-xl text-muted-foreground">submitted</p>
+        {(allIn || left <= 0) && (
+          <p className="mt-2 font-display text-lg text-flame">
+            {allIn ? "Everyone's in! 🔥 Tap Reveal when ready." : "Time's up! Tap Reveal when ready."}
+          </p>
+        )}
       </div>
       <NextButton room={room} token={token} onChange={onChange} />
     </main>

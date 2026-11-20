@@ -15,6 +15,13 @@
       "when": 1795167480799,
       "tag": "0001_flat_photo_paths",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795170097743,
+      "tag": "0002_host_controls_reveal",
+      "breakpoints": true
     }
   ]
 }

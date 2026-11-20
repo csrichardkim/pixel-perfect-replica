@@ -8,7 +8,7 @@ import { compressImage, uploadToSignedUrl } from "@/lib/photo";
 type Stage = "loading" | "editing" | "sending" | "locked";
 
 const ERRORS: Record<string, string> = {
-  round_closed: "Time's up for this round! Hang tight for the reveal.",
+  round_closed: "The host already revealed this round — hang tight!",
   not_in_room: "We lost track of you — try rejoining the room.",
   next_round: "You joined mid-round. You're in starting next round!",
 };

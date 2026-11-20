@@ -104,7 +104,7 @@ export function favoriteNames(groups: readonly RevealGroup[]): Set<string> {
 }
 
 export const REVEAL_INTRO_MS = 2500;
-export const REVEAL_CARD_MS = 2500;
+export const REVEAL_CARD_MS = 1000;
 
 export type RevealStage =
   | { kind: "intro" }

@@ -162,7 +162,6 @@ export function CampScene({
             }
           />
         ))}
-        <div className="absolute right-[9%] top-[13%] h-12 w-12 rounded-full bg-cream shadow-[0_0_40px_10px] shadow-cream/25 sm:h-16 sm:w-16" />
         {/* String lights */}
         <svg viewBox="0 0 100 24" preserveAspectRatio="none" className="absolute inset-x-0 top-0 h-16 w-full sm:h-20">
           <path d="M0 6 Q25 40 50 6 Q75 40 100 6" className="stroke-cream/40" strokeWidth="0.25" vectorEffect="non-scaling-stroke" fill="none" />

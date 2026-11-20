@@ -5,7 +5,6 @@ import { CountdownBar, PromptText, RoundBadge } from "@/components/camp/bits";
 import { AnswerForm } from "@/components/camp/AnswerForm";
 import { RevealShow } from "@/components/camp/RevealShow";
 import { usePlayers, useRoom, useServerClock, useTicker, type Player, type Room } from "@/hooks/use-game";
-import { tickRound } from "@/lib/game.functions";
 import { remainingMs } from "@/lib/game-utils";
 import { promptForRound } from "@/lib/prompts";
 import { session } from "@/lib/session";
@@ -121,19 +120,6 @@ function PlayerRound({ room, me }: { room: Room; me: Player }) {
   useTicker(250);
   const left = remainingMs(room.round_started_at, room.round_duration_seconds, now());
   const eligible = room.round_started_at ? Date.parse(me.joined_at) <= Date.parse(room.round_started_at) : false;
-  const expired = left <= 0;
-
-  useEffect(() => {
-    if (!expired) return undefined;
-    // Nudge the server when time's up (host usually does this first). Staggered + retried.
-    const tick = () => void tickRound({ data: { code: room.code } }).catch(() => {});
-    const first = setTimeout(tick, 1200 + Math.random() * 2000);
-    const again = setInterval(tick, 5000 + Math.random() * 2000);
-    return () => {
-      clearTimeout(first);
-      clearInterval(again);
-    };
-  }, [expired, room.current_round, room.code]);
 
   return (
     <main className="flex flex-1 flex-col gap-5">
@@ -141,11 +127,14 @@ function PlayerRound({ room, me }: { room: Room; me: Player }) {
       <PromptText key={`prompt-${room.current_round}`} text={promptForRound(room.current_round)} className="animate-sign-swing" />
       <CountdownBar remainingMs={left} totalMs={room.round_duration_seconds * 1000} />
       {eligible ? (
-        left > 0 ? (
+        <>
+          {left <= 0 && (
+            <p className="text-center font-display text-lg text-flame">
+              ⏰ Time's up! You can still submit until the host reveals.
+            </p>
+          )}
           <AnswerForm key={`answer-${room.current_round}`} code={room.code} playerId={me.id} round={room.current_round} />
-        ) : (
-          <p className="panel p-6 text-center font-display text-2xl">⏰ Time's up! Reveal coming…</p>
-        )
+        </>
       ) : (
         <div className="panel p-6 text-center">
           <p className="text-5xl">🪵</p>

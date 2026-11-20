@@ -119,15 +119,6 @@ export const endGame = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-/** Any device may call this when its countdown hits zero; the DB only acts if time is really up. */
-export const tickRound = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ code }).parse(d))
-  .handler(async ({ data }) => {
-    const db = await admin();
-    await db.rpc("tick_round", { p_code: data.code });
-    return { ok: true as const };
-  });
-
 export const joinRoom = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z

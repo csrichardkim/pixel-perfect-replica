@@ -183,7 +183,6 @@ export type Database = {
         }
         Returns: Json
       }
-      tick_round: { Args: { p_code: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
