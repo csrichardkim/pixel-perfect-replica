@@ -28,3 +28,10 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- No user accounts: hosts prove ownership with a secret host token (stored in `room_secrets`, never readable by the browser); every state change goes through server functions in `src/lib/game.functions.ts` that call service-role-only SQL functions, so game rules run atomically on the database clock.
+- Browsers only read `rooms` and `players` (public SELECT + Realtime); `submissions` and photos are server-only so reveals stay anonymous. Photos live in the private `photos` bucket at `<roomId>/r<round>-<playerId>-<id>.jpg` (flat, so one listing finds them all for cleanup).
+- Countdown and reveal timing derive from server timestamps (`round_started_at`, `reveal_started_at`) plus a measured clock offset, so all phones stay in sync; pure timing/grouping helpers live in `src/lib/game-utils.ts` with tests in `src/test/game-rules.test.ts`.
+- Prompts and avatars are edited in `src/lib/prompts.ts` only; the server reads the round count from there too.
+- Room data is purged when a game ends, and rooms older than 24 hours are purged whenever a new room is created (no scheduled job).
