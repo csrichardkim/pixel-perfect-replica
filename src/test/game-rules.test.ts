@@ -1,9 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   CODE_ALPHABET,
-  favoriteNames,
   generateRoomCode,
-  groupCards,
   normalizeCodeInput,
   revealStage,
   seededShuffle,
@@ -40,21 +38,6 @@ describe("reveal timing", () => {
   it("gives every device the same card order for a round", () => {
     const items = ["a", "b", "c", "d", "e", "f"];
     expect(seededShuffle(items, "room:1")).toEqual(seededShuffle(items, "room:1"));
-  });
-});
-
-describe("collage grouping", () => {
-  const card = (name: string, i: number) => ({ key: String(i), name, url: "u" });
-  it("groups repeated names (any case/spacing) with a count", () => {
-    const groups = groupCards([card("Abigail", 1), card("abigail ", 2), card("Ben", 3), card("ABIGAIL", 4)]);
-    expect(groups[0]?.count).toBe(3);
-    expect(groups[0]?.name.toLowerCase()).toBe("abigail");
-    expect(groups[1]?.count).toBe(1);
-  });
-
-  it("crowns the most-picked name only when picked at least twice", () => {
-    expect(favoriteNames(groupCards([card("A", 1), card("B", 2)])).size).toBe(0);
-    expect([...favoriteNames(groupCards([card("A", 1), card("a", 2), card("B", 3)]))]).toEqual(["a"]);
   });
 });
 

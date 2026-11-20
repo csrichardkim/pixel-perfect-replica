@@ -62,46 +62,11 @@ export function seededShuffle<T>(items: readonly T[], seed: string): T[] {
   return out;
 }
 
-export function normalizeName(name: string): string {
-  return name.trim().replace(/\s+/g, " ").toLowerCase();
-}
-
 export function cleanName(name: string): string {
   return name.trim().replace(/\s+/g, " ");
 }
 
 export type RevealCard = { key: string; name: string; url: string };
-export type RevealGroup = { name: string; count: number; cards: RevealCard[] };
-
-/** Groups cards by name (case/space-insensitive), most-picked first. */
-export function groupCards(cards: readonly RevealCard[]): RevealGroup[] {
-  const map = new Map<string, RevealCard[]>();
-  for (const c of cards) {
-    const k = normalizeName(c.name);
-    const list = map.get(k) ?? [];
-    list.push(c);
-    map.set(k, list);
-  }
-  const groups: RevealGroup[] = [];
-  for (const list of map.values()) {
-    // Display the most common spelling.
-    const spellings = new Map<string, number>();
-    for (const c of list) {
-      const n = cleanName(c.name);
-      spellings.set(n, (spellings.get(n) ?? 0) + 1);
-    }
-    const best = [...spellings.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "";
-    groups.push({ name: best, count: list.length, cards: list });
-  }
-  return groups.sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
-}
-
-/** Names that get the "Camp Favorite" ribbon: most picks, picked at least twice. */
-export function favoriteNames(groups: readonly RevealGroup[]): Set<string> {
-  const top = groups[0]?.count ?? 0;
-  if (top < 2) return new Set();
-  return new Set(groups.filter((g) => g.count === top).map((g) => normalizeName(g.name)));
-}
 
 export const REVEAL_INTRO_MS = 2500;
 export const REVEAL_CARD_MS = 1000;

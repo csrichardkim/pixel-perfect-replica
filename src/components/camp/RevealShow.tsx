@@ -1,7 +1,7 @@
 import { useEffect, useMemo, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getReveal } from "@/lib/game.functions";
-import { favoriteNames, groupCards, normalizeName, revealStage, type RevealCard } from "@/lib/game-utils";
+import { revealStage, type RevealCard } from "@/lib/game-utils";
 import { promptForRound } from "@/lib/prompts";
 import { storageUrl } from "@/lib/photo";
 import { useServerClock, useTicker, type Room } from "@/hooks/use-game";
@@ -46,27 +46,6 @@ function Polaroid({
         {card.name}
       </figcaption>
     </figure>
-  );
-}
-
-function Fireflies() {
-  return (
-    <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-      {Array.from({ length: 14 }, (_, i) => (
-        <span
-          key={i}
-          className="animate-firefly absolute left-1/2 top-1/2 h-2 w-2 rounded-full bg-flame shadow-[0_0_10px_4px] shadow-flame/70"
-          style={
-            {
-              "--fx": `${Math.cos((i / 14) * Math.PI * 2) * (70 + (i % 3) * 30)}px`,
-              "--fy": `${Math.sin((i / 14) * Math.PI * 2) * (70 + (i % 4) * 25)}px`,
-              "--delay": `${(i % 5) * 0.3}s`,
-              "--dur": `${1.6 + (i % 3) * 0.4}s`,
-            } as React.CSSProperties
-          }
-        />
-      ))}
-    </div>
   );
 }
 
@@ -144,8 +123,6 @@ export function RevealShow({ room, footer }: { room: Room; footer: ReactNode }) 
   }
 
   // Final collage
-  const groups = groupCards(cards);
-  const favorites = favoriteNames(groups);
   return (
     <div className="flex flex-1 flex-col items-center gap-5">
       <RoundBadge round={round} />
@@ -159,37 +136,15 @@ export function RevealShow({ room, footer }: { room: Room; footer: ReactNode }) 
         <>
           <PromptText text="The votes are in!" className="text-3xl sm:text-4xl" />
           <div className="flex w-full flex-wrap items-start justify-center gap-x-4 gap-y-8">
-            {groups.map((g, i) => {
-              const fav = favorites.has(normalizeName(g.name));
-              const lead = g.cards[0];
-              if (!lead) return null;
-              return (
-                <div
-                  key={lead.key}
-                  className={cn("animate-pop-in relative", fav ? "w-2/3 max-w-64" : "w-[44%] max-w-52")}
-                  style={{ "--delay": `${i * 0.12}s`, "--tilt": `${TILTS[i % TILTS.length]}deg` } as React.CSSProperties}
-                >
-                  {fav && <Fireflies />}
-                  {g.count > 1 && (
-                    <>
-                      <div className="polaroid absolute inset-0 rotate-6 opacity-80" aria-hidden="true" />
-                      <div className="polaroid absolute inset-0 -rotate-3 opacity-90" aria-hidden="true" />
-                    </>
-                  )}
-                  <Polaroid card={{ ...lead, name: g.name }} size="md" className="relative" />
-                  {g.count > 1 && (
-                    <span className="absolute -right-2 -top-3 z-10 rounded-full bg-ember px-2.5 py-0.5 font-display text-lg text-cream shadow-3d-wood">
-                      x{g.count}
-                    </span>
-                  )}
-                  {fav && (
-                    <div className="absolute -left-2 -right-2 -bottom-4 z-10 rounded-md bg-fire py-1 text-center font-sign text-sm text-ink shadow-3d-fire">
-                      🏆 Camp Favorite
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+            {cards.map((c, i) => (
+              <div
+                key={c.key}
+                className="animate-pop-in w-[44%] max-w-52"
+                style={{ "--delay": `${i * 0.12}s`, "--tilt": `${TILTS[i % TILTS.length]}deg` } as React.CSSProperties}
+              >
+                <Polaroid card={c} size="md" />
+              </div>
+            ))}
           </div>
         </>
       )}
