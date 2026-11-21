@@ -3,12 +3,12 @@
  * one round per prompt.
  */
 export const PROMPTS: readonly string[] = [
-  "Who's most likely to make friends with a stranger?",
   "Who's most likely to fall asleep first at camp?",
   "Who's most likely to get married first?",
   "Who's most likely to become famous?",
   "Who's most likely to get arrested?",
   "Who's most likely to secretly bring alcohol to camp?",
+  "Who is most likely to be the next ISA President?",
   "Who's most likely to have a hidden talent?",
   "Who's most likely to give the best advice?",
 ];

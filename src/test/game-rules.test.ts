@@ -44,7 +44,8 @@ describe("reveal timing", () => {
 describe("game setup", () => {
   it("plays the 8 prompts in order", () => {
     expect(PROMPTS).toHaveLength(8);
-    expect(PROMPTS[0]).toBe("Who's most likely to make friends with a stranger?");
+    expect(PROMPTS[0]).toBe("Who's most likely to fall asleep first at camp?");
+    expect(PROMPTS[5]).toBe("Who is most likely to be the next ISA President?");
     expect(PROMPTS[7]).toBe("Who's most likely to give the best advice?");
   });
 
